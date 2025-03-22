@@ -26,12 +26,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Instala o ChromeDriver compatível
+      - name: Instala o ChromeDriver compatível com o Chrome instalado
         run: |
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+' | head -1)
-          echo "Chrome version: $CHROME_VERSION"
-          DRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
-          wget "$DRIVER_URL" -O chromedriver.zip
+          FULL_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
+          echo "Versão completa do Chrome: $FULL_VERSION"
+
+          wget "https://storage.googleapis.com/chrome-for-testing-public/${FULL_VERSION}/linux64/chromedriver-linux64.zip" -O chromedriver.zip
           unzip chromedriver.zip
           sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
