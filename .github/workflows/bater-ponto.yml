@@ -26,26 +26,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Instalar o Google Chrome e ChromeDriver
-        run: |
-          sudo apt update
-          sudo apt install -y wget unzip
+      # - name: Instalar o Google Chrome e ChromeDriver
+      #   run: |
+      #     sudo apt update
+      #     sudo apt install -y wget unzip
 
-          # Baixar Chrome
-          wget https://storage.googleapis.com/chrome-for-testing-public/132.0.6834.83/linux64/chrome-linux64.zip
-          unzip chrome-linux64.zip
-          sudo mv chrome-linux64 /opt/
+      #     # Baixar Chrome
+      #     wget https://storage.googleapis.com/chrome-for-testing-public/132.0.6834.83/linux64/chrome-linux64.zip
+      #     unzip chrome-linux64.zip
+      #     sudo mv chrome-linux64 /opt/
 
-          # Ignora se já estiver instalado
-          if [ ! -f /usr/bin/google-chrome ]; then
-            sudo ln -s /opt/chrome-linux64/chrome /usr/bin/google-chrome
-          fi
+      #     # Ignora se já estiver instalado
+      #     if [ ! -f /usr/bin/google-chrome ]; then
+      #       sudo ln -s /opt/chrome-linux64/chrome /usr/bin/google-chrome
+      #     fi
 
-          # Baixar e instalar o ChromeDriver
-          wget https://storage.googleapis.com/chrome-for-testing-public/132.0.6834.83/linux64/chromedriver-linux64.zip
-          unzip chromedriver-linux64.zip
-          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-          sudo chmod +x /usr/local/bin/chromedriver
+      #     # Baixar e instalar o ChromeDriver
+      #     wget https://storage.googleapis.com/chrome-for-testing-public/132.0.6834.83/linux64/chromedriver-linux64.zip
+      #     unzip chromedriver-linux64.zip
+      #     sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+      #     sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Executa o script de ponto
         run: python main.py
