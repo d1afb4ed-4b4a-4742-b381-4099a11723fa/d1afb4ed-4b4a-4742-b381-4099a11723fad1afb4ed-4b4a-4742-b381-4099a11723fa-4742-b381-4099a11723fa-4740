@@ -1,0 +1,51 @@
+name: Bater Ponto
+
+on:
+  schedule:
+    - cron: "0 11 * * 1-5" # 08:00 BRT (ajuste se quiser)
+    - cron: "0 15 * * 1-5" # 12:00 BRT
+    - cron: "0 16 * * 1-5" # 13:00 BRT
+    - cron: "0 20 * * 1-5" # 17:00 BRT
+  workflow_dispatch: # Permite rodar manualmente
+
+jobs:
+  ponto:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Instala Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instala dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Instala o Google Chrome e ChromeDriver
+        run: |
+          sudo apt update
+          sudo apt install -y wget unzip
+          wget https://storage.googleapis.com/chrome-for-testing-public/132.0.6834.83/linux64/chrome-linux64.zip
+          unzip chrome-linux64.zip
+          sudo mv chrome-linux64 /opt/
+          sudo ln -s /opt/chrome-linux64/chrome /usr/bin/google-chrome
+
+          wget https://storage.googleapis.com/chrome-for-testing-public/132.0.6834.83/linux64/chromedriver-linux64.zip
+          unzip chromedriver-linux64.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
+
+      - name: Executa o script de ponto
+        run: python main.py
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_DEST: ${{ secrets.EMAIL_DEST }}
+          LOGIN_USER: ${{ secrets.LOGIN_USER }}
+          LOGIN_PASS: ${{ secrets.LOGIN_PASS }}
+          PORTAL_URL: ${{ secrets.PORTAL_URL }}
