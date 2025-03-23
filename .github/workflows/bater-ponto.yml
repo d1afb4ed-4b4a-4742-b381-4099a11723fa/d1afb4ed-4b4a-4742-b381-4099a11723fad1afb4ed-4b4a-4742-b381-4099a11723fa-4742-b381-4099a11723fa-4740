@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
     inputs:
       etapa:
+        description: "Etapa da jornada"
         required: true
-        description: "Etapa do ponto"
         default: "entrada"
 
 jobs:
@@ -56,6 +56,7 @@ jobs:
           LOGIN_USER: ${{ secrets.LOGIN_USER }}
           LOGIN_PASS: ${{ secrets.LOGIN_PASS }}
           PORTAL_URL: ${{ secrets.PORTAL_URL }}
+          ETAPA_PONTO: ${{ github.event.inputs.etapa }}
 
       - name: Salva jornada após sorteio
         if: ${{ github.event.schedule == '0 11 * * 1-5' }}

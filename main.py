@@ -16,18 +16,17 @@ from utils import (
 logger = setup_logger()
 data_hoje = datetime.date.today()
 
-# ⏰ Determina a etapa com base na hora UTC (usado no GitHub Actions)
 hora_utc = datetime.datetime.utcnow().hour
 
-if hora_utc == 11:
-    etapa = "entrada"
-elif hora_utc == 15:
-    etapa = "saida_almoco"
-elif hora_utc == 16:
-    etapa = "volta_almoco"
-elif hora_utc == 20:
-    etapa = "saida_final"
-else:
+etapa_por_hora = {
+    11: "entrada",  # 08:00 BRT
+    15: "saida_almoco",  # 12:00 BRT
+    16: "volta_almoco",  # 13:00 BRT
+    20: "saida_final",  # 17:00 BRT
+}
+
+etapa = etapa_por_hora.get(hora_utc)
+if etapa is None:
     logger.warning("⏳ Hora não corresponde a nenhuma etapa. Encerrando.")
     exit(0)
 
