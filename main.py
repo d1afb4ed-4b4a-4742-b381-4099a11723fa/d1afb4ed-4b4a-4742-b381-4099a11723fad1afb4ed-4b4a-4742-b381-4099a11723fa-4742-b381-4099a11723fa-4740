@@ -19,10 +19,10 @@ data_hoje = datetime.date.today()
 hora_utc = datetime.datetime.now(datetime.timezone.utc).hour
 
 etapa_por_hora = {
-    11: "entrada",  # 08:00 BRT
-    15: "saida_almoco",  # 12:00 BRT
-    16: "volta_almoco",  # 13:00 BRT
-    20: "saida_final",  # 17:00 BRT
+    11: "entrada",
+    15: "saida_almoco",
+    16: "volta_almoco",
+    20: "saida_final",
 }
 
 logger.info(f"⏰ Hora UTC: {hora_utc}")

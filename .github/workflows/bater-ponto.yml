@@ -2,10 +2,10 @@ name: Bater Ponto
 
 on:
   schedule:
-    - cron: "0 11 * * 1-5" # 08:00 BRT → entrada
-    - cron: "0 15 * * 1-5" # 12:00 BRT → saida_almoco
-    - cron: "0 16 * * 1-5" # 13:00 BRT → volta_almoco
-    - cron: "0 20 * * 1-5" # 17:00 BRT → saida_final
+    - cron: "0 11 * * 1-5"
+    - cron: "0 15 * * 1-5"
+    - cron: "0 16 * * 1-5"
+    - cron: "0 20 * * 1-5"
   workflow_dispatch:
     inputs:
       etapa:
@@ -40,12 +40,6 @@ jobs:
           unzip chromedriver.zip
           sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
-
-      # - name: Baixa jornada anterior (exceto na entrada)
-      #   if: ${{ github.event.schedule != '0 11 * * 1-5' }}
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: jornada
 
       - name: Executa o script de ponto
         run: python main.py
