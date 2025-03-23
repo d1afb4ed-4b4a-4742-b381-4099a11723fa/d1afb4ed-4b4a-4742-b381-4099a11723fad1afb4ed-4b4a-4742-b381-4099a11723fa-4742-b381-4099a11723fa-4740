@@ -16,7 +16,7 @@ from utils import (
 logger = setup_logger()
 data_hoje = datetime.date.today()
 
-hora_utc = datetime.now(datetime.timezone.utc).hour
+hora_utc = datetime.datetime.now(datetime.timezone.utc).hour
 
 etapa_por_hora = {
     0: "entrada",  # 08:00 BRT
