@@ -41,11 +41,11 @@ jobs:
           sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
 
-      - name: Baixa jornada anterior (exceto na entrada)
-        if: ${{ github.event.schedule != '0 11 * * 1-5' }}
-        uses: actions/download-artifact@v4
-        with:
-          name: jornada
+      # - name: Baixa jornada anterior (exceto na entrada)
+      #   if: ${{ github.event.schedule != '0 11 * * 1-5' }}
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: jornada
 
       - name: Executa o script de ponto
         run: python main.py
