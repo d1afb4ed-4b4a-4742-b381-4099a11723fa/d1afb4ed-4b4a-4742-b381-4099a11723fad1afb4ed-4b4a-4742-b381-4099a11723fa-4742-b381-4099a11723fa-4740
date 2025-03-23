@@ -2,11 +2,11 @@ name: Bater Ponto
 
 on:
   schedule:
-    - cron: "0 11 * * 1-5" # 08:00 BRT (ajuste se quiser)
-    - cron: "0 15 * * 1-5" # 12:00 BRT
-    - cron: "0 16 * * 1-5" # 13:00 BRT
-    - cron: "0 20 * * 1-5" # 17:00 BRT
-  workflow_dispatch: # Permite rodar manualmente
+    - cron: "0 11 * * 1-5" # 08:00 BRT → entrada
+    - cron: "0 15 * * 1-5" # 12:00 BRT → saida_almoco
+    - cron: "0 16 * * 1-5" # 13:00 BRT → volta_almoco
+    - cron: "0 20 * * 1-5" # 17:00 BRT → saida_final
+  workflow_dispatch:
 
 jobs:
   ponto:
@@ -26,15 +26,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Instala o ChromeDriver compatível com o Chrome instalado
+      - name: Instala Chrome e ChromeDriver compatível
         run: |
-          FULL_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
-          echo "Versão completa do Chrome: $FULL_VERSION"
+          sudo apt update
+          sudo apt install -y wget unzip xvfb libxi6 libgconf-2-4 libnss3 libasound2 libxss1 libgbm1 libxshmfence1 libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt -fy install
 
-          wget "https://storage.googleapis.com/chrome-for-testing-public/${FULL_VERSION}/linux64/chromedriver-linux64.zip" -O chromedriver.zip
-          unzip chromedriver.zip
+          FULL_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
+          echo "Chrome version: $FULL_VERSION"
+          wget "https://storage.googleapis.com/chrome-for-testing-public/${FULL_VERSION}/linux64/chromedriver-linux64.zip"
+          unzip chromedriver-linux64.zip
           sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
+
+      - name: Baixa jornada anterior (exceto na entrada)
+        if: env.ETAPA_PONTO != 'entrada'
+        uses: actions/download-artifact@v4
+        with:
+          name: jornada
 
       - name: Executa o script de ponto
         run: python main.py
@@ -45,3 +55,11 @@ jobs:
           LOGIN_USER: ${{ secrets.LOGIN_USER }}
           LOGIN_PASS: ${{ secrets.LOGIN_PASS }}
           PORTAL_URL: ${{ secrets.PORTAL_URL }}
+          ETAPA_PONTO: ${{ github.event.schedule == '0 11 * * 1-5' && 'entrada' || github.event.schedule == '0 15 * * 1-5' && 'saida_almoco' || github.event.schedule == '0 16 * * 1-5' && 'volta_almoco' || 'saida_final' }}
+
+      - name: Salva jornada após sorteio
+        if: env.ETAPA_PONTO == 'entrada'
+        uses: actions/upload-artifact@v4
+        with:
+          name: jornada
+          path: jornada.json
