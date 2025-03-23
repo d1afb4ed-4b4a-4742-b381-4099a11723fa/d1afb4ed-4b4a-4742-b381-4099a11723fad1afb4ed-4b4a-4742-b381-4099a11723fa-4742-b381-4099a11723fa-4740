@@ -57,5 +57,5 @@ jobs:
         if: env.ETAPA_PONTO == 'entrada'
         uses: actions/upload-artifact@v4
         with:
-          name: jornada
+          name: jornada-${{ github.run_id }}
           path: jornada.json
