@@ -1,6 +1,6 @@
 import os
 import json
-import datetime
+from datetime import datetime, timezone
 import time
 
 from config import HORARIO_ENTRADA_MIN, HORARIO_ENTRADA_MAX
@@ -16,7 +16,7 @@ from utils import (
 logger = setup_logger()
 data_hoje = datetime.date.today()
 
-hora_utc = datetime.datetime.utcnow().hour
+hora_utc = datetime.now(timezone.utc).hour
 
 etapa_por_hora = {
     11: "entrada",  # 08:00 BRT
