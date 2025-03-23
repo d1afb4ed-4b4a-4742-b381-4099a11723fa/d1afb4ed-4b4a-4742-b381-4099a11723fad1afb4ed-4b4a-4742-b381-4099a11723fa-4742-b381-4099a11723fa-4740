@@ -26,7 +26,7 @@ etapa_por_hora = {
 }
 
 logger.info(f"⏰ Hora UTC: {hora_utc}")
-logger.ingo(f"📅 Data de hoje: {data_hoje}")
+logger.info(f"📅 Data de hoje: {data_hoje}")
 
 etapa = etapa_por_hora.get(hora_utc)
 if etapa is None:
