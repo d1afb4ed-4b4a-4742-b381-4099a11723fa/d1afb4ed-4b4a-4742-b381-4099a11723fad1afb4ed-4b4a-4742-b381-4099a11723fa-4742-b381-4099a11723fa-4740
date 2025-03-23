@@ -7,6 +7,11 @@ on:
     - cron: "0 16 * * 1-5" # 13:00 BRT → volta_almoco
     - cron: "0 20 * * 1-5" # 17:00 BRT → saida_final
   workflow_dispatch:
+    inputs:
+      etapa:
+        required: true
+        description: "Etapa do ponto"
+        default: "entrada"
 
 jobs:
   ponto:
@@ -37,7 +42,7 @@ jobs:
           sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Baixa jornada anterior (exceto na entrada)
-        if: env.ETAPA_PONTO != 'entrada'
+        if: ${{ github.event.schedule != '0 11 * * 1-5' }}
         uses: actions/download-artifact@v4
         with:
           name: jornada
@@ -51,11 +56,10 @@ jobs:
           LOGIN_USER: ${{ secrets.LOGIN_USER }}
           LOGIN_PASS: ${{ secrets.LOGIN_PASS }}
           PORTAL_URL: ${{ secrets.PORTAL_URL }}
-          ETAPA_PONTO: ${{ github.event.schedule == '0 11 * * 1-5' && 'entrada' || github.event.schedule == '0 15 * * 1-5' && 'saida_almoco' || github.event.schedule == '0 16 * * 1-5' && 'volta_almoco' || 'saida_final' }}
 
       - name: Salva jornada após sorteio
-        if: env.ETAPA_PONTO == 'entrada'
+        if: ${{ github.event.schedule == '0 11 * * 1-5' }}
         uses: actions/upload-artifact@v4
         with:
-          name: jornada-${{ github.run_id }}
+          name: jornada
           path: jornada.json

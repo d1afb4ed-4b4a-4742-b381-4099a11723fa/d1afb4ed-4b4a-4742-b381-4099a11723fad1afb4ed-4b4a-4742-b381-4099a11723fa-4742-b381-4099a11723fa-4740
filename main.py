@@ -14,8 +14,24 @@ from utils import (
 )
 
 logger = setup_logger()
-etapa = os.getenv("ETAPA_PONTO")
 data_hoje = datetime.date.today()
+
+# ⏰ Determina a etapa com base na hora UTC (usado no GitHub Actions)
+hora_utc = datetime.datetime.utcnow().hour
+
+if hora_utc == 11:
+    etapa = "entrada"
+elif hora_utc == 15:
+    etapa = "saida_almoco"
+elif hora_utc == 16:
+    etapa = "volta_almoco"
+elif hora_utc == 20:
+    etapa = "saida_final"
+else:
+    logger.warning("⏳ Hora não corresponde a nenhuma etapa. Encerrando.")
+    exit(0)
+
+logger.info(f"Etapa detectada automaticamente: {etapa}")
 
 if not is_dia_util(data_hoje):
     logger.info("Hoje não é dia útil. Nada será feito.")
