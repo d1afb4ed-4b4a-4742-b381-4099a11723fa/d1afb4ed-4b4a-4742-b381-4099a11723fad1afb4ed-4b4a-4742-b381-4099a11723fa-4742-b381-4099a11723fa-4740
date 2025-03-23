@@ -25,6 +25,8 @@ etapa_por_hora = {
     20: "saida_final",  # 17:00 BRT
 }
 
+logger.info(f"⏰ Hora UTC: {hora_utc}")
+
 etapa = etapa_por_hora.get(hora_utc)
 if etapa is None:
     logger.warning("⏳ Hora não corresponde a nenhuma etapa. Encerrando.")
