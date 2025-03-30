@@ -63,7 +63,14 @@ if etapa == "entrada":
     jornada = calcular_jornada_completa(entrada_time, intervalo, data_hoje)
 
     with open("jornada.json", "w") as f:
-        json.dump({k: v.strftime("%Y-%m-%d %H:%M:%S") for k, v in jornada.items()}, f)
+        json.dump(
+            {
+                k: v.strftime("%Y-%m-%d %H:%M:%S") if isinstance(v, datetime.datetime) else str(v)
+                for k, v in jornada.items()
+            },
+            f
+        )
+
     logger.info("🧠 Jornada sorteada e salva em jornada.json")
 else:
     if not os.path.exists("jornada.json"):
