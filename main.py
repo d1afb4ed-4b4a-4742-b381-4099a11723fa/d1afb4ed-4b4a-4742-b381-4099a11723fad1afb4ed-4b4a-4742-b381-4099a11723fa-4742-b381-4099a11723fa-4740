@@ -28,12 +28,29 @@ etapa_por_hora = {
 logger.info(f"⏰ Hora UTC: {hora_utc}")
 logger.info(f"📅 Horário atual: {datetime.datetime.now(datetime.timezone.utc)}")
 
-etapa = etapa_por_hora.get(hora_utc)
-if etapa is None:
-    logger.warning("⏳ Hora não corresponde a nenhuma etapa. Encerrando.")
-    exit(0)
+# Se o GitHub Actions definir a etapa manualmente via variável de ambiente, usar isso
+etapa = os.getenv("ETAPA_PONTO")
 
-logger.info(f"Etapa detectada automaticamente: {etapa}")
+if etapa:
+    logger.info(f"Etapa recebida via variável de ambiente: {etapa}")
+else:
+    hora_utc = datetime.datetime.now(datetime.timezone.utc).hour
+    etapa_por_hora = {
+        11: "entrada",
+        15: "saida_almoco",
+        16: "volta_almoco",
+        20: "saida_final",
+    }
+    etapa = etapa_por_hora.get(hora_utc)
+    logger.info(f"⏰ Hora UTC: {hora_utc}")
+    logger.info(f"📅 Horário atual: {datetime.datetime.now(datetime.timezone.utc)}")
+
+    if etapa is None:
+        logger.warning("⏳ Hora não corresponde a nenhuma etapa. Encerrando.")
+        exit(0)
+
+    logger.info(f"Etapa detectada automaticamente: {etapa}")
+
 
 if not is_dia_util(data_hoje):
     logger.info("Hoje não é dia útil. Nada será feito.")
