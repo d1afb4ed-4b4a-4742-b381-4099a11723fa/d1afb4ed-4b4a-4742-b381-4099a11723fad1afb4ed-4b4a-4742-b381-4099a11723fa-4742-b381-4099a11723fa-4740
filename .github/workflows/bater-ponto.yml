@@ -2,10 +2,10 @@ name: Bater Ponto
 
 on:
   schedule:
-    - cron: "0 11 * * 1-5"
-    - cron: "0 15 * * 1-5"
-    - cron: "0 16 * * 1-5"
-    - cron: "0 20 * * 1-5"
+    - cron: "0 11 * * 1-5"   # 08:00 BRT
+    - cron: "0 15 * * 1-5"   # 12:00 BRT
+    - cron: "0 16 * * 1-5"   # 13:00 BRT
+    - cron: "0 20 * * 1-5"   # 17:00 BRT
   workflow_dispatch:
     inputs:
       etapa:
@@ -33,13 +33,23 @@ jobs:
 
       - name: Instala o ChromeDriver compatível com o Chrome instalado
         run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
           FULL_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
-          echo "Versão completa do Chrome: $FULL_VERSION"
-
+          echo "Versão do Chrome: $FULL_VERSION"
           wget "https://storage.googleapis.com/chrome-for-testing-public/${FULL_VERSION}/linux64/chromedriver-linux64.zip" -O chromedriver.zip
           unzip chromedriver.zip
           sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
+
+      - name: Define variável ETAPA_PONTO
+        id: etapa
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "ETAPA=${{ github.event.inputs.etapa }}" >> $GITHUB_ENV
+          else
+            echo "ETAPA=entrada" >> $GITHUB_ENV
+          fi
 
       - name: Executa o script de ponto
         run: python main.py
@@ -50,10 +60,10 @@ jobs:
           LOGIN_USER: ${{ secrets.LOGIN_USER }}
           LOGIN_PASS: ${{ secrets.LOGIN_PASS }}
           PORTAL_URL: ${{ secrets.PORTAL_URL }}
-          ETAPA_PONTO: ${{ github.event.inputs.etapa }}
+          ETAPA_PONTO: ${{ env.ETAPA }}
 
-      - name: Salva jornada após sorteio
-        if: ${{ github.event.schedule == '0 11 * * 1-5' }}
+      - name: Salva jornada após sorteio (apenas às 08:00 BRT)
+        if: github.event.schedule == '0 11 * * 1-5'
         uses: actions/upload-artifact@v4
         with:
           name: jornada
