@@ -14,7 +14,8 @@ from utils import (
 )
 
 logger = setup_logger()
-data_hoje = datetime.date.today()
+# Simula segunda-feira
+data_hoje = datetime.date(2025, 3, 31)
 
 hora_utc = datetime.datetime.now(datetime.timezone.utc).hour
 
